@@ -23,6 +23,7 @@ import { TablerMenu2 } from "../Icones/Tabler";
 import LoginDialog from "../Login";
 import InlineSvgIcon from "../InlineSvgIcon";
 import { useAdminNavigation } from "@/contexts/AdminNavigationContext";
+import { SERVER_RELEASES_API } from "@/lib/repoSources";
 import { useAccount } from "@/contexts/AccountContext";
 import { usePublicInfo } from "@/contexts/PublicInfoContext";
 import Tips from "../ui/tips";
@@ -260,7 +261,7 @@ const AdminPanelBar = ({ content }: AdminPanelBarProps) => {
     async function loadReleases() {
       try {
         const resp = await fetch(
-          "https://api.github.com/repos/komari-monitor/komari/releases?per_page=100",
+          SERVER_RELEASES_API,
           {
             headers: {
               Accept: "application/vnd.github+json",
