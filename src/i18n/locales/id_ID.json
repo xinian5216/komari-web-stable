@@ -107,6 +107,7 @@
       "deleting": "Menghapus...",
       "disableAutoUpdate": "Nonaktifkan Pembaruan Otomatis",
       "disableWebSsh": "Nonaktifkan Kontrol Jarak Jauh",
+      "enableRemoteControl": "Aktifkan kontrol jarak jauh (eksekusi perintah, terminal, pengelola berkas)",
       "dragToReorder": "Tekan lama dan seret untuk mengurutkan ulang",
       "editNodePrice": "Ubah Harga",
       "emptyGuide": {
@@ -1476,6 +1477,9 @@
     "duplicate_tab": "Duplikat Tab",
     "export_text": "Ekspor Teks",
     "find": "Cari",
+    "file_manager_disabled": "Pengelola berkas tidak diaktifkan pada agen ini",
+    "remote_control_disabled": "Kontrol jarak jauh tidak diaktifkan pada agen ini",
+    "remote_control_elevated": "Agen ini berjalan dengan hak istimewa tinggi, sehingga kontrol jarak jauh memungkinkan panel menjalankan perintah dan mengakses berkas dengan hak tersebut.",
     "no_active_connection": "Tidak ada koneksi aktif",
     "otp_invalid": "Kode 2FA tidak valid atau kedaluwarsa",
     "reconnecting": "Koneksi terputus. Menyambung ulang...",

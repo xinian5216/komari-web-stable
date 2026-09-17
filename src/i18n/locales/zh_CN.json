@@ -114,6 +114,7 @@
         "title": "还没有任何服务器"
       },
       "enableGpuMonitoring": "启用详细 GPU 监控",
+      "enableRemoteControl": "启用远程控制（命令执行、终端、文件管理器）",
       "errorLoadNodeList": "无法加载节点列表",
       "errorRefreshNodeList": "刷新列表失败",
       "excludeNics": "排除特定网卡",
@@ -1475,10 +1476,13 @@
     "disconnect": "连接已断开",
     "duplicate_tab": "复制标签页",
     "export_text": "导出文本",
+    "file_manager_disabled": "该 Agent 未启用文件管理器",
     "find": "查找",
     "no_active_connection": "没有活动连接",
     "otp_invalid": "2FA 验证码无效或已过期",
     "reconnecting": "连接已断开，正在重新连接...",
+    "remote_control_disabled": "该 Agent 未启用远程控制",
+    "remote_control_elevated": "该 Agent 以高权限账户运行，启用远程控制意味着面板可在该设备上以高权限执行命令和文件操作。",
     "rename_tab": "重命名选项卡",
     "resource_monitor": {
       "close": "隐藏资源小窗",

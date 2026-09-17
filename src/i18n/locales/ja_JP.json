@@ -107,6 +107,7 @@
       "deleting": "削除中...",
       "disableAutoUpdate": "自動更新を無効にする",
       "disableWebSsh": "リモートコントロールを無効にする",
+      "enableRemoteControl": "リモートコントロールを有効にする（コマンド実行・ターミナル・ファイルマネージャー）",
       "dragToReorder": "長押ししてドラッグで再配置",
       "editNodePrice": "請求書を編集",
       "emptyGuide": {
@@ -1476,6 +1477,9 @@
     "duplicate_tab": "タブを複製",
     "export_text": "テキストをエクスポート",
     "find": "検索",
+    "file_manager_disabled": "このエージェントではファイルマネージャーが有効になっていません",
+    "remote_control_disabled": "このエージェントではリモートコントロールが有効になっていません",
+    "remote_control_elevated": "このエージェントは高権限アカウントで実行されているため、リモートコントロールを有効にするとパネルからその権限でコマンド実行とファイル操作が可能になります。",
     "no_active_connection": "アクティブな接続はありません",
     "otp_invalid": "2FAコードが無効または期限切れです",
     "reconnecting": "接続が切断されました。再接続しています...",

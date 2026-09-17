@@ -107,6 +107,7 @@
       "deleting": "刪除中...",
       "disableAutoUpdate": "禁用自動更新",
       "disableWebSsh": "禁用遠端控制",
+      "enableRemoteControl": "啟用遠端控制（命令執行、終端、檔案管理器）",
       "dragToReorder": "長按拖拽重新排序",
       "editNodePrice": "編輯帳單",
       "emptyGuide": {
@@ -1476,6 +1477,9 @@
     "duplicate_tab": "複製分頁",
     "export_text": "匯出文字",
     "find": "尋找",
+    "file_manager_disabled": "該 Agent 未啟用檔案管理器",
+    "remote_control_disabled": "該 Agent 未啟用遠端控制",
+    "remote_control_elevated": "該 Agent 以高權限帳戶執行，啟用遠端控制意味著面板可在該裝置上以高權限執行命令與檔案操作。",
     "no_active_connection": "沒有活動連線",
     "otp_invalid": "2FA 驗證碼無效或已過期",
     "reconnecting": "連線中斷，正在重新連線...",

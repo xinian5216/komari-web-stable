@@ -107,6 +107,7 @@
       "deleting": "Delete...",
       "disableAutoUpdate": "Disable auto update",
       "disableWebSsh": "Disable remote control",
+      "enableRemoteControl": "Enable remote control (command execution, terminal, file manager)",
       "dragToReorder": "Long press and drag to reorder",
       "editNodePrice": "Edit Price",
       "emptyGuide": {
@@ -1488,6 +1489,9 @@
     "duplicate_tab": "Duplicate tab",
     "export_text": "Export text",
     "find": "Find",
+    "file_manager_disabled": "The file manager is not enabled on this agent",
+    "remote_control_disabled": "Remote control is not enabled on this agent",
+    "remote_control_elevated": "This agent runs with high privileges, so remote control lets the panel execute commands and access files with that privilege.",
     "resource_monitor": {
       "close": "Hide Resource Monitor",
       "load_error": "Failed to load live data",
