@@ -32,7 +32,12 @@
    Docker 安装命令的镜像 `ghcr.io/komari-monitor/komari-agent:latest` → `ghcr.io/xinian5216/komari-agent-stable:latest`。
 3. **升级检查来源**（`src/components/admin/AdminPanelBar.tsx`）：GitHub releases 查询由上游 komari 仓库
    改为本 fork 的 `xinian5216/komari-stable`。
-4. **删除与上游耦合、或依赖本 fork 不使用的密钥的 workflow**：
+4. **新增根 `LICENSE`**：上游仓库从未有过根 `LICENSE` 文件（`package.json` 无 `license` 字段、
+   GitHub 元数据为 `null`），但作者在本仓库源码内已明确声明 MIT（`src/utils/eula.ts` §3、
+   `src/pages/admin/about.tsx` 的 MIT 卡片、`src/utils/field.ts` 的 `MIT_LICENSE` 常量）。
+   本 fork 把该正文**逐字**提升为根 `LICENSE`（署名保持 `Copyright (C) 2025 Komari Monitor`），
+   属于把作者已有声明变为机器可读，**不是重新授权**；取证与决定记录见 [`LICENSE_AUDIT.md`](./LICENSE_AUDIT.md)。
+5. **删除与上游耦合、或依赖本 fork 不使用的密钥的 workflow**：
    `follow-komari-release.yaml`（定时跟随上游 release 并向 komari-monitor 派发事件）、
    `generate-release-notes.yml`（依赖 `OPENAI_API_KEY`）。均以普通提交删除，**保留 git 历史**。
 
