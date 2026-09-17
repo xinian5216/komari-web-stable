@@ -8,7 +8,7 @@
 | --- | --- |
 | Original Project | **Komari Web**（Komari 默认主题前端，React 19 + Vite + TypeScript） |
 | Original Repository | https://github.com/komari-monitor/komari-web |
-| Original License | 见仓库内 `LICENSE`（原样保留，未做任何改动） |
+| Original License | **MIT**（依上游作者在其仓库内的明示：`src/utils/eula.ts` 第 3 节「本软件依据开源许可证（MIT）授权使用」/ "The Software is licensed under the MIT open-source license"，以及 `src/pages/admin/about.tsx` 中署名 `Copyright (C) 2025 Komari Monitor` 的 MIT 卡片）。**上游根目录没有 `LICENSE` 文件**，本镜像保持原状、未添加也未移除任何许可证文件；完整取证见 [`LICENSE_AUDIT.md`](./LICENSE_AUDIT.md) |
 | Copyright / Credits | 归原作者与贡献者所有；`src/components/NavBar.tsx`、`src/pages/admin/about.tsx`、`komari-theme.json` 等处的上游链接与署名**全部保留** |
 
 ## 2. Fork 基线
