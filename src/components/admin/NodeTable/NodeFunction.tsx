@@ -19,6 +19,49 @@ import {
   TextField,
 } from "@radix-ui/themes";
 import { toast } from "sonner";
+import { useRemoteControlClients } from "@/hooks/useRemoteControlClients";
+import { remoteControlState } from "@/pages/terminal/terminalTypes";
+
+/**
+ * Terminal entry for one node. The link is disabled when the agent reported
+ * that remote control is disabled on its side, so the panel does not offer a
+ * terminal that would be refused. Agents that reported nothing keep the link.
+ */
+function TerminalLink({ uuid }: { uuid: string }) {
+  const { clients } = useRemoteControlClients();
+  const state = remoteControlState(clients.get(uuid));
+
+  if (state.known && !state.terminal) {
+    return (
+      <IconButton
+        variant="ghost"
+        disabled
+        title={t(
+          "terminal.remote_control_disabled",
+          "Remote control is not enabled on this agent",
+        )}
+        aria-label={t(
+          "terminal.remote_control_disabled",
+          "Remote control is not enabled on this agent",
+        )}
+      >
+        <Terminal className="p-1 opacity-40" />
+      </IconButton>
+    );
+  }
+
+  return (
+    <a href={`/terminal?uuid=${uuid}`} target="_blank" rel="noreferrer">
+      <IconButton
+        variant="ghost"
+        title={t("terminal.title", "Terminal")}
+        aria-label={t("terminal.title", "Terminal")}
+      >
+        <Terminal className="p-1" />
+      </IconButton>
+    </a>
+  );
+}
 
 async function removeClient(uuid: string) {
   await fetch(`/api/admin/client/${uuid}/remove`, {
@@ -27,7 +70,7 @@ async function removeClient(uuid: string) {
 }
 
 type InstallOptions = {
-  disableWebSsh: boolean;
+  enableRemoteControl: boolean;
   disableAutoUpdate: boolean;
   ignoreUnsafeCert: boolean;
   ghproxy: string;
@@ -43,7 +86,7 @@ export function ActionsCell({ row }: { row: Row<z.infer<typeof schema>> }) {
   const [selectedPlatform, setSelectedPlatform] =
     React.useState<Platform>("linux");
   const [installOptions, setInstallOptions] = React.useState<InstallOptions>({
-    disableWebSsh: false,
+    enableRemoteControl: false,
     disableAutoUpdate: false,
     ignoreUnsafeCert: false,
     ghproxy: "",
@@ -55,9 +98,9 @@ export function ActionsCell({ row }: { row: Row<z.infer<typeof schema>> }) {
     const host = window.location.origin;
     const token = row.original.token ?? "";
     const args: string[] = ["-e", host, "-t", token];
-    // 根据安装选项生成参数
-    if (installOptions.disableWebSsh) {
-      args.push("--disable-web-ssh");
+    // 新安装默认关闭远控（安装器行为）；这里显式要求时才传入开启参数
+    if (installOptions.enableRemoteControl) {
+      args.push("--enable-remote-control");
     }
     if (installOptions.disableAutoUpdate) {
       args.push("--disable-auto-update");
@@ -155,11 +198,11 @@ export function ActionsCell({ row }: { row: Row<z.infer<typeof schema>> }) {
               <div className="grid grid-cols-2 gap-2">
                 <Flex gap="2">
                   <Checkbox
-                    checked={installOptions.disableWebSsh}
+                    checked={installOptions.enableRemoteControl}
                     onCheckedChange={(checked) => {
                       setInstallOptions((prev) => ({
                         ...prev,
-                        disableWebSsh: Boolean(checked),
+                        enableRemoteControl: Boolean(checked),
                       }));
                     }}
                   />
@@ -168,11 +211,11 @@ export function ActionsCell({ row }: { row: Row<z.infer<typeof schema>> }) {
                     onClick={() => {
                       setInstallOptions((prev) => ({
                         ...prev,
-                        disableWebSsh: !prev.disableWebSsh,
+                        enableRemoteControl: !prev.enableRemoteControl,
                       }));
                     }}
                   >
-                    {t("admin.nodeTable.disableWebSsh", "禁用 WebSSH")}
+                    {t("admin.nodeTable.enableRemoteControl", "启用远程控制")}
                   </label>
                 </Flex>
                 <Flex gap="2">
@@ -293,15 +336,7 @@ export function ActionsCell({ row }: { row: Row<z.infer<typeof schema>> }) {
           </div>
         </Dialog.Content>
       </Dialog.Root>
-      <a href={`/terminal?uuid=${row.original.uuid}`} target="_blank">
-        <IconButton
-          variant="ghost"
-          title={t("terminal.title", "Terminal")}
-          aria-label={t("terminal.title", "Terminal")}
-        >
-          <Terminal className="p-1" />
-        </IconButton>
-      </a>
+      <TerminalLink uuid={row.original.uuid} />
       {/** Edit Button */}
       <EditDialog item={row.original} />
       {/** Edit Money */}

@@ -3,7 +3,41 @@ export interface TerminalClient {
   name: string;
   os: string;
   weight?: number;
+  // Reported by the server from what the agent advertises. Older agents send
+  // none of these, which must keep the previous behaviour.
+  capabilities?: string[];
+  privilege_level?: string;
+  remote_control_known?: boolean;
 }
+
+export type RemoteControlCapability = "exec" | "terminal" | "file";
+
+export interface RemoteControlState {
+  /** The agent reported its capabilities at all. */
+  known: boolean;
+  /** Whether the agent reported that it can be remote controlled. */
+  enabled: boolean;
+  /** Whether the agent runs as a high-privilege account (root/SYSTEM). */
+  elevated: boolean;
+  terminal: boolean;
+  file: boolean;
+}
+
+export const remoteControlState = (
+  client: TerminalClient | undefined,
+): RemoteControlState => {
+  const known = Boolean(client?.remote_control_known);
+  const capabilities = client?.capabilities ?? [];
+  const has = (capability: RemoteControlCapability) =>
+    known ? capabilities.includes(capability) : true;
+  return {
+    known,
+    enabled: known ? capabilities.includes("terminal") : true,
+    elevated: client?.privilege_level === "elevated",
+    terminal: has("terminal"),
+    file: has("file"),
+  };
+};
 
 export interface TerminalTab {
   id: string;

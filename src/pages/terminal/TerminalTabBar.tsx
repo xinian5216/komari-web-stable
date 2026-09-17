@@ -49,6 +49,7 @@ import {
   TAB_ACTION_CLASS_NAME,
   TAB_SCROLL_BUTTON_CLASS_NAME,
   TAB_SEPARATOR_CLASS_NAME,
+  remoteControlState,
   type CloseMode,
   type ContextMenuPosition,
   type TerminalClient,
@@ -586,10 +587,24 @@ const TerminalTabBar = ({
                 <span>{t("terminal.tabs.no_servers")}</span>
               </DropdownMenuItem>
             ) : (
-              orderedClients.map((client) => (
+              orderedClients.map((client) => {
+                const state = remoteControlState(client);
+                const disabled = state.known && !state.file;
+                return (
                 <DropdownMenuItem
                   key={client.uuid}
-                  onSelect={() => onOpenWorkbenchClient(client)}
+                  disabled={disabled}
+                  title={
+                    disabled
+                      ? t(
+                          "terminal.remote_control_disabled",
+                          "Remote control is not enabled on this agent",
+                        )
+                      : undefined
+                  }
+                  onSelect={() => {
+                    if (!disabled) onOpenWorkbenchClient(client);
+                  }}
                   className="flex min-w-0 items-center gap-2"
                 >
                   <img
@@ -602,7 +617,8 @@ const TerminalTabBar = ({
                     {client.name || client.uuid}
                   </span>
                 </DropdownMenuItem>
-              ))
+                );
+              })
             )}
           </DropdownMenuContent>
         </DropdownMenu>

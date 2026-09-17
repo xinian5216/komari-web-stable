@@ -3,15 +3,18 @@ import type {
   RefObject,
   TouchEvent as ReactTouchEvent,
 } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ClipboardList, Code2, Files, PanelRightClose, PanelRightOpen, SquareTerminal } from "lucide-react";
+import { TablerAlertTriangleFilled } from "@/components/Icones/Tabler";
 import CommandClipboardPanel from "./CommandClipboard";
 import FileManagerPanel from "./FileManagerPanel";
 import TerminalSession from "./TerminalSession";
 import { TerminalSearchBar } from "./TerminalSearchBar";
 import type { TerminalSessionApi } from "./TerminalSession";
 import type { XtermjsSettings } from "@/hooks/useXtermjsSettings";
-import type { TerminalTab } from "./terminalTypes";
+import type { TerminalTab, TerminalClient } from "./terminalTypes";
+import { remoteControlState, TERMINAL_CALLOUT_CLASS_NAME } from "./terminalTypes";
 
 export interface TerminalWorkspaceProps {
   containerRef: RefObject<HTMLDivElement | null>;
@@ -19,6 +22,7 @@ export interface TerminalWorkspaceProps {
   sidebarTab: "clipboard" | "files";
   leftWidth: number;
   tabs: TerminalTab[];
+  clients: TerminalClient[];
   clientsLoading: boolean;
   activeTabId: string | null;
   sessionsReady: boolean;
@@ -65,6 +69,7 @@ const TerminalWorkspace = ({
   sidebarTab,
   leftWidth,
   tabs,
+  clients,
   clientsLoading,
   activeTabId,
   sessionsReady,
@@ -91,6 +96,23 @@ const TerminalWorkspace = ({
   onOpenWorkbenchMenu,
 }: TerminalWorkspaceProps) => {
   const { t } = useTranslation();
+  const clientsByUuid = useMemo(
+    () => new Map(clients.map((client) => [client.uuid, client])),
+    [clients],
+  );
+  const activeClient = clientsByUuid.get(
+    tabs.find((tab) => tab.id === activeTabId)?.uuid ?? "",
+  );
+  // The high-privilege notice is informational: it is shown once per client and
+  // can be dismissed, so it never turns into a repeating popup.
+  const [dismissedElevatedNotice, setElevatedNoticeDismissed] = useState<
+    Record<string, boolean>
+  >({});
+  const activeState = remoteControlState(activeClient);
+  const elevatedNoticeVisible =
+    activeState.enabled &&
+    activeState.elevated &&
+    !dismissedElevatedNotice[activeClient?.uuid ?? ""];
 
   return (
     <div
@@ -119,8 +141,57 @@ const TerminalWorkspace = ({
         />
 
         <div className="km-terminal-session-stack relative h-full min-h-0 min-w-0 flex-1 overflow-hidden bg-[#000000]">
+          {elevatedNoticeVisible && (
+            <div className="pointer-events-none absolute inset-x-0 top-2 z-20 flex justify-center">
+              <div
+                className={`pointer-events-auto flex max-w-2xl items-center gap-3 px-3 py-2 text-sm ${TERMINAL_CALLOUT_CLASS_NAME}`}
+              >
+                <TablerAlertTriangleFilled className="shrink-0 text-red-400" />
+                <span>
+                  {t(
+                    "terminal.remote_control_elevated",
+                    "This agent runs with high privileges, so remote control lets the panel execute commands and access files with that privilege.",
+                  )}
+                </span>
+                <button
+                  type="button"
+                  className="ml-auto cursor-pointer border-0 bg-transparent text-red-300 hover:text-red-100"
+                  onClick={() =>
+                    setElevatedNoticeDismissed((previous) => ({
+                      ...previous,
+                      [activeClient?.uuid ?? ""]: true,
+                    }))
+                  }
+                  aria-label={t("common.close", "Close")}
+                >
+                  ×
+                </button>
+              </div>
+            </div>
+          )}
           {sessionsReady &&
-            tabs.map((tab) => (
+            tabs.map((tab) => {
+              const state = remoteControlState(clientsByUuid.get(tab.uuid));
+              if (state.known && !state.terminal) {
+                return (
+                  <div
+                    key={tab.id}
+                    className={
+                      tab.id === activeTabId
+                        ? "km-terminal-empty-state absolute inset-0 flex h-full w-full flex-col items-center justify-center gap-3 p-6 text-center"
+                        : "hidden"
+                    }
+                  >
+                    <span className="text-neutral-300">
+                      {t(
+                        "terminal.remote_control_disabled",
+                        "Remote control is not enabled on this agent",
+                      )}
+                    </span>
+                  </div>
+                );
+              }
+              return (
               <TerminalSession
                 key={tab.id}
                 uuid={tab.uuid}
@@ -130,7 +201,8 @@ const TerminalWorkspace = ({
                 disconnectMessage={disconnectMessage}
                 onApiChange={(api) => onApiChange(tab.id, api)}
               />
-            ))}
+              );
+            })}
           {tabs.length === 0 && (
             <div className="km-terminal-empty-state flex h-full w-full flex-col items-center justify-center gap-3">
               <strong className="text-neutral-400">
@@ -215,7 +287,18 @@ const TerminalWorkspace = ({
               <CommandClipboardPanel showHeader={false} className="h-full w-full" />
             </div>
             <div className={sidebarTab === "files" ? "h-full overflow-hidden" : "hidden"}>
-              <FileManagerPanel uuid={tabs.find((tab) => tab.id === activeTabId)?.uuid ?? null} />
+              {remoteControlState(activeClient).known && !remoteControlState(activeClient).file ? (
+                <div className="km-terminal-empty-state flex h-full w-full flex-col items-center justify-center gap-3 p-6 text-center">
+                  <span className="text-neutral-300">
+                    {t(
+                      "terminal.file_manager_disabled",
+                      "The file manager is not enabled on this agent",
+                    )}
+                  </span>
+                </div>
+              ) : (
+                <FileManagerPanel uuid={tabs.find((tab) => tab.id === activeTabId)?.uuid ?? null} />
+              )}
             </div>
           </div>
       </aside>

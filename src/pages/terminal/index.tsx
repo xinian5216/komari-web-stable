@@ -131,6 +131,7 @@ const TerminalPage = () => {
             sidebarTab={sidebarTab}
             leftWidth={leftWidth}
             tabs={tabs}
+            clients={clients}
             clientsLoading={clientsLoading}
             activeTabId={activeTabId}
             sessionsReady={sessionsReady}
