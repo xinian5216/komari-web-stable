@@ -66,12 +66,32 @@
 | 授权本身的风险 | 低 | 未发现与 MIT 不兼容的许可（如 GPL/AGPL）或限制再分发的条款；EULA §5.7「逆向工程（法律允许范围除外）」与 §5.1–5.6 的行为规范针对**使用行为**，对"直接使用与维护源代码"不构成限制；本项目未进行任何逆向工程。 |
 | 第三方组件 | 低 | About 页列出的组件为 BSD-3 / ISC / CC-BY-4.0（Twemoji，未修改），均与 MIT 兼容。 |
 
-## 5. 建议动作
+## 5. 决定记录：已添加根 `LICENSE`（2026-09-17）
+
+上面的调查已找到**上游作者自己**的明确 MIT 授权（EULA §3 双语声明 + `about.tsx` 署名 MIT 卡片 +
+`src/utils/field.ts` 中的完整 MIT 文本）。据此，维护者决定把该声明**提升为机器可识别的根许可证文件**：
+
+- 新增文件：本仓库根 [`LICENSE`](./LICENSE)
+- 内容来源：**逐字复制**上游源码 `src/utils/field.ts` 中 `MIT_LICENSE` 常量的正文（标准 MIT 文本），
+  保留上游原署名 **`Copyright (C) 2025 Komari Monitor`**；**未修改 MIT 正文任何一字**。
+- **不是**复制 Server 仓库的 `LICENSE`（Server 的版权行为 `Copyright (c) 2025 Komari Moniter`，与本前端
+  源码中的署名不同）。
+- **未**在 LICENSE 顶部插入"本文件由 fork 添加"之类的说明——避免干扰 SPDX / GitHub 等许可证扫描器识别；
+  相关说明只写在本文档与 `UPSTREAM.md` 中。
+- 性质说明：这是**把上游作者已经存在于源码中的许可证声明，提升为仓库根的许可证文件**；
+  **不是维护者对上游代码重新授权**，也未改变任何授权范围（MIT 的权利与义务完全一致）。
+- 上游仓库本身至今没有根 `LICENSE` 文件；本镜像添加它属于本 fork 的改动，已在 `UPSTREAM.md` 中登记。
+
+至此本审计的"缺少机器可读许可声明"这一项在下游镜像中得到缓解；上游仓库状态不受影响。
+
+## 6. 建议动作
 
 1. **（已执行）** 修正镜像 `UPSTREAM.md` 中与事实不符的表述：原文写作"Original License | 见仓库内 `LICENSE`（原样保留，未做任何改动）"——**该文件并不存在**；已改为中性且可核查的说明，并指向本审计。
-2. **（待维护者决定）** 是否在本镜像添加根 `LICENSE`（MIT，署名 `Copyright (C) 2025 Komari Monitor`），建议同时在文件首行注明："内容与上游作者在 `src/utils/eula.ts` / `src/pages/admin/about.tsx` 中的声明一致，来源见 `LICENSE_AUDIT.md`"。
+2. **（已完成，见 §5）** 已在本镜像添加根 `LICENSE`：MIT 正文逐字取自 `src/utils/field.ts`，署名
+   `Copyright (C) 2025 Komari Monitor`，未加任何额外说明行（说明保留在本文档与 `UPSTREAM.md`）。
 3. **（待维护者决定）** 是否向上游提 issue 请求补根 LICENSE（上游已归档，预计无法处理，价值有限）。
-4. **（已遵守）** 未把 Server 的 MIT 文本复制到前端仓库充当其许可证；镜像内至今没有任何 LICENSE 文件。
+4. **（已遵守）** 未把 Server 的 MIT 文本复制到前端仓库充当其许可证；所添加的根 `LICENSE` 逐字来自
+   本前端仓库源码中的 `MIT_LICENSE` 常量。
 5. **（已遵守）** 保留上游一切署名与许可展示：`src/components/NavBar.tsx`、`src/pages/admin/about.tsx`（含 MIT / Apache-2.0 卡片与第三方组件清单）、`src/utils/field.ts`、`komari-theme.json`、README 均原样保留。
 
 ---
