@@ -11,18 +11,22 @@ import * as fs from "fs";
 import * as path from "path";
 import dotenv from "dotenv";
 
-// Keep the default theme's navigation fallback limited to routes that the
-// bundled React application actually owns. Workbox tests pathname + search.
+// Keep the default theme's navigation fallback limited to public SPA routes
+// that this React app owns. Core admin/terminal/recovery documents are served
+// by the embedded frontend and must never be replaced by Workbox fallback HTML
+// (which can be the active public theme's index.html when theme=next).
 const defaultThemeNavigationAllowlist = [
   /^\/(\?.*)?$/,
   /^\/instance\/[^/]+\/?(\?.*)?$/,
   /^\/plugin\/[^/]+(\/[^?]*)?(\?.*)?$/,
-  /^\/install\/?(\?.*)?$/,
-  /^\/database-recovery\/?(\?.*)?$/,
-  /^\/admin\/?(\?.*)?$/,
-  /^\/admin\/(database-migration|dashboard|servers|theme_managed|theme_raw|themes|theme|plugins(\/config)?|plugin-page|market\/(themes|plugins)|sessions|account|settings(\/(site|theme|custom|sign-on|notification|general|xtermjs|metrics))?|notification(\/(channels|offline|load|general|traffic-report))?|ping|about|logs|pprof|exec)\/?(\?.*)?$/,
-  /^\/terminal\/?(\?.*)?$/,
-  /^\/manage(\/[^?]*)?(\?.*)?$/,
+];
+
+const defaultThemeNavigationDenylist = [
+  /^\/admin(?:\/|$)/,
+  /^\/terminal(?:\/|$)/,
+  /^\/manage(?:\/|$)/,
+  /^\/install(?:\/|$)/,
+  /^\/database-recovery(?:\/|$)/,
 ];
 
 function localKomariThemePlugin(): Plugin {
@@ -108,11 +112,10 @@ export default defineConfig(({ mode }) => {
         workbox: {
           globPatterns: ["**/*.{js,css,html,ico,png,svg}"],
           maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
+          cleanupOutdatedCaches: true,
+          navigateFallback: "index.html",
           navigateFallbackAllowlist: defaultThemeNavigationAllowlist,
-          navigateFallbackDenylist: [
-            /^\/database-recovery(?:\/|$)/,
-            /^\/admin\/(?:database-migration|update\/1\.2\.7|metric-store\/restructure)(?:\/|$)/,
-          ],
+          navigateFallbackDenylist: defaultThemeNavigationDenylist,
           runtimeCaching: [
             {
               urlPattern: /^https:\/\/api\./i,

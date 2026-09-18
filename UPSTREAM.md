@@ -43,7 +43,11 @@
 6. **Agent 远控能力门禁**（`v1.5.0-stable.1` 起）：新增 `useRemoteControlClients`、终端工作区 capability
    状态和全 locale 文案。Agent 明确上报缺少 `exec` / `terminal` / `file` 能力时，隐藏或禁用对应入口；
    未上报 capability 的旧 Agent 保持原有行为。节点安装命令把远控改为显式 opt-in。
-7. **新增前端硬门禁 CI**：`web-ci.yml` 执行 `npm ci`、lint、locale 同步检查与生产构建。
+  7. **新增前端硬门禁 CI**：`web-ci.yml` 执行 `npm ci`、lint、locale 同步检查与生产构建。
+  8. **PWA navigation fallback 不再接管后台核心路径**（`vite.config.ts`）：Workbox
+     allowlist 只保留公开 SPA（`/`、`/instance/*`、`/plugin/*`）；`/admin`、`/terminal`、
+     `/manage`、`/install`、`/database-recovery` 进入 denylist，避免 `theme=next` 时把
+     Next 首页 HTML 当成 `/admin` 的离线回退。CI 在生产构建后检查源码与 `dist/sw.js`。
 
 > 版权、许可证与上游署名链接未改。除上述仓库来源和远控安全门禁外，其余 UI 与业务逻辑保持上游基线。
 

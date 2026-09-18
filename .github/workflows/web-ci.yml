@@ -37,6 +37,9 @@ jobs:
       - name: Build (type check + bundle)
         run: npm run build
 
+      - name: Verify Service Worker navigation fallback excludes core routes
+        run: npm run test:sw-routes
+
       - name: Verify the locale files stay in sync
         run: npm run i18n:sync:dry
 
