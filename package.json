@@ -43,7 +43,7 @@
     "react-i18next": "^15.5.1",
     "react-markdown": "^10.1.0",
     "react-toastify": "^11.0.5",
-    "recharts": "^2.15.3",
+    "recharts": "^3.10.1",
     "remark-gfm": "^4.0.1",
     "sonner": "^2.0.3",
     "tailwind-merge": "^3.3.0",
