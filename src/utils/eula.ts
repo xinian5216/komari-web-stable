@@ -57,7 +57,6 @@ export const EULAS: Record<string, string> = {
 
 10. 风险提示
   - 本软件以“现状”提供，可能受限于网络、硬件、系统差异而产生不兼容、不可用或误用风险。
-  - 远程控制与批量操作具有潜在高风险，请务必采取最小权限、分级授权、多因素认证、审计留痕、分环境验证等最佳实践。
 
 11. 免责声明
   在适用法律允许的最大范围内：本软件及其开发者不对本软件的适用性、稳定性、正确性、可用性或特定目的适配性作出任何明示或默示保证；亦不对因使用或无法使用本软件而导致的任何形式的损失或损害承担责任。
@@ -139,7 +138,7 @@ export const EULAS: Record<string, string> = {
 
 10. 風險提示
   - 本軟體以“現狀”提供，可能受限於網路、硬體、系統差異而產生不相容、不可用或誤用風險。
-  - 遠端控制與批次操作具有潛在高風險，請務必採取最小權限、分級授權、多因素認證、審計留痕、分環境驗證等最佳實踐。
+  - 批次操作具有潛在高風險，請務必採取最小權限、分級授權、多因素認證、審計留痕、分環境驗證等最佳實踐。
 
 11. 免責聲明
   在適用法律允許的最大範圍內：本軟體及其開發者不對本軟體的適用性、穩定性、正確性、可用性或特定目的適配性作出任何明示或默示保證；亦不對因使用或無法使用本軟體而導致的任何形式的損失或損害承擔責任。
@@ -221,7 +220,7 @@ Important Notice
 
 10. Risk Disclosure
   - The Software is provided "as is" and may be subject to incompatibility, unavailability, or misuse risks due to differences in networks, hardware, or systems.
-  - Remote control and batch operations carry potentially high risks. Please be sure to adopt best practices such as least privilege, tiered authorization, multi-factor authentication, audit trails, and staged environment validation.
+  - Batch operations carry potentially high risks. Please be sure to adopt best practices such as least privilege, tiered authorization, multi-factor authentication, audit trails, and staged environment validation.
 
 11. Disclaimer of Warranties
   To the maximum extent permitted by applicable law, the Software and its developers make no express or implied warranties regarding the suitability, stability, correctness, availability, or fitness for a particular purpose of the Software, and assume no liability for any loss or damage arising from the use of or inability to use the Software.
@@ -303,7 +302,7 @@ Effective date: 2025-10-20
 
 10. リスクに関する注意
   - 本ソフトウェアは「現状のまま」提供され、ネットワーク、ハードウェア、システムの差異により、非互換、利用不可、誤用のリスクが生じる可能性があります。
-  - リモートコントロールと一括操作には潜在的に高いリスクがあります。最小権限、段階的な承認、多要素認証、監査証跡、環境別の検証などのベストプラクティスを必ず採用してください。
+  - 一括操作には潜在的に高いリスクがあります。最小権限、段階的な承認、多要素認証、監査証跡、環境別の検証などのベストプラクティスを必ず採用してください。
 
 11. 保証の否認
   適用法令が許す最大限の範囲で、本ソフトウェアおよびその開発者は、本ソフトウェアの適合性、安定性、正確性、可用性、または特定目的への適合性について、明示的または黙示的な保証を行いません。また、本ソフトウェアの使用または使用不能によって生じたいかなる種類の損失または損害についても責任を負いません。
@@ -385,7 +384,7 @@ Penting
 
 10. Peringatan Risiko
   - Perangkat Lunak disediakan "sebagaimana adanya" dan dapat menimbulkan risiko ketidakcocokan, ketidaktersediaan, atau penyalahgunaan karena perbedaan jaringan, perangkat keras, atau sistem.
-  - Kontrol jarak jauh dan operasi massal memiliki potensi risiko tinggi. Pastikan Anda menerapkan praktik terbaik seperti hak akses minimal, otorisasi berjenjang, autentikasi multi-faktor, jejak audit, dan validasi per lingkungan.
+  - Operasi massal memiliki potensi risiko tinggi. Pastikan Anda menerapkan praktik terbaik seperti hak akses minimal, otorisasi berjenjang, autentikasi multi-faktor, jejak audit, dan validasi per lingkungan.
 
 11. Penyangkalan Jaminan
   Sejauh diizinkan oleh hukum yang berlaku: Perangkat Lunak dan pengembangnya tidak memberikan jaminan tersurat maupun tersirat apa pun mengenai kesesuaian, stabilitas, kebenaran, ketersediaan, atau kesesuaian untuk tujuan tertentu; dan tidak bertanggung jawab atas segala bentuk kerugian atau kerusakan yang timbul akibat penggunaan atau ketidakmampuan menggunakan Perangkat Lunak.

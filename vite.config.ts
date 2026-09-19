@@ -12,9 +12,8 @@ import * as path from "path";
 import dotenv from "dotenv";
 
 // Keep the default theme's navigation fallback limited to public SPA routes
-// that this React app owns. Core admin/terminal/recovery documents are served
-// by the embedded frontend and must never be replaced by Workbox fallback HTML
-// (which can be the active public theme's index.html when theme=next).
+// that this React app owns. Core admin/recovery documents and the removed
+// /terminal tombstone must never be replaced by Workbox fallback HTML.
 const defaultThemeNavigationAllowlist = [
   /^\/(\?.*)?$/,
   /^\/instance\/[^/]+\/?(\?.*)?$/,
@@ -144,22 +143,8 @@ export default defineConfig(({ mode }) => {
     define: {
       __BUILD_TIME__: JSON.stringify(buildTime),
     },
-      resolve: {
-        alias: [
-          { find: "@", replacement: path.resolve(__dirname, "./src") },
-          {
-            find: /^monaco-editor-codicon\.css$/,
-            replacement: path.resolve(
-              __dirname,
-              "node_modules/monaco-editor/esm/vs/base/browser/ui/codicons/codicon/codicon.css",
-            ),
-          },
-        // Force xterm to use the CJS build to avoid a rollup bug where `||=` in
-        // xterm.mjs is incorrectly lowered to `void 0||(i={})` with an undeclared `i`,
-        // causing `ReferenceError: i is not defined` at requestMode when vi sends DECRQM sequences.
-        // Regex to match only the bare specifier, not subpaths like @xterm/xterm/css/xterm.css.
-        { find: /^@xterm\/xterm$/, replacement: path.resolve(__dirname, "node_modules/@xterm/xterm/lib/xterm.js") },
-      ],
+    resolve: {
+      alias: [{ find: "@", replacement: path.resolve(__dirname, "./src") }],
     },
     build: {
       assetsDir: "assets",
