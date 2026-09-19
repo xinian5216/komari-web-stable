@@ -76,7 +76,7 @@ jobs:
         ls -la ${ZIP_NAME}
         
     - name: Upload theme as artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: komari-theme-v${{ env.VERSION_DATE }}-${{ env.COMMIT_HASH }}
         path: |
