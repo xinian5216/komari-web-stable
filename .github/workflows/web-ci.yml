@@ -1,8 +1,8 @@
 name: web-ci
 
 # Build and lint gate for the panel (the theme that ships inside the server).
-# The remote control UI is gated on the capabilities the server reports, so the
-# panel has to compile and lint cleanly before it is published.
+# Remote command, terminal, and Agent file UI are intentionally absent. The
+# panel must compile, lint, and pass the static removal guard before publishing.
 
 on:
   push:
@@ -33,6 +33,9 @@ jobs:
 
       - name: Lint
         run: npm run lint
+
+      - name: Guard removed remote-control UI
+        run: npm run test:remote-control-removed
 
       - name: Build (type check + bundle)
         run: npm run build

@@ -40,16 +40,15 @@
 5. **删除与上游耦合、或依赖本 fork 不使用的密钥的 workflow**：
    `follow-komari-release.yaml`（定时跟随上游 release 并向 komari-monitor 派发事件）、
    `generate-release-notes.yml`（依赖 `OPENAI_API_KEY`）。均以普通提交删除，**保留 git 历史**。
-6. **Agent 远控能力门禁**（`v1.5.0-stable.1` 起）：新增 `useRemoteControlClients`、终端工作区 capability
-   状态和全 locale 文案。Agent 明确上报缺少 `exec` / `terminal` / `file` 能力时，隐藏或禁用对应入口；
-   未上报 capability 的旧 Agent 保持原有行为。节点安装命令把远控改为显式 opt-in。
+6. **移除远程控制 UI**（Issue #1）：删除远程命令、终端、Agent 文件管理、xterm 设置页面及其
+   hooks/context/依赖；节点与自动发现安装命令不再生成任何远控开关。静态 CI 守卫禁止恢复入口或调用。
   7. **新增前端硬门禁 CI**：`web-ci.yml` 执行 `npm ci`、lint、locale 同步检查与生产构建。
   8. **PWA navigation fallback 不再接管后台核心路径**（`vite.config.ts`）：Workbox
      allowlist 只保留公开 SPA（`/`、`/instance/*`、`/plugin/*`）；`/admin`、`/terminal`、
      `/manage`、`/install`、`/database-recovery` 进入 denylist，避免 `theme=next` 时把
      Next 首页 HTML 当成 `/admin` 的离线回退。CI 在生产构建后检查源码与 `dist/sw.js`。
 
-> 版权、许可证与上游署名链接未改。除上述仓库来源和远控安全门禁外，其余 UI 与业务逻辑保持上游基线。
+> 版权、许可证与上游署名链接未改。除上述仓库来源、远控移除与 PWA 修复外，其余 UI 与业务逻辑保持上游基线。
 
 ## 4. 溯源方法
 

@@ -2,7 +2,7 @@ import * as React from "react";
 import { z } from "zod";
 import { schema } from "@/components/admin/NodeTable/schema/node";
 import { DataTableRefreshContext } from "@/components/admin/NodeTable/schema/DataTableRefreshContext";
-import { Terminal, Trash2, Copy, Download, DollarSign } from "lucide-react";
+import { Trash2, Copy, Download, DollarSign } from "lucide-react";
 import { t } from "i18next";
 import type { Row } from "@tanstack/react-table";
 import { EditDialog } from "./NodeEditDialog";
@@ -19,49 +19,6 @@ import {
   TextField,
 } from "@radix-ui/themes";
 import { toast } from "sonner";
-import { useRemoteControlClients } from "@/hooks/useRemoteControlClients";
-import { remoteControlState } from "@/pages/terminal/terminalTypes";
-
-/**
- * Terminal entry for one node. The link is disabled when the agent reported
- * that remote control is disabled on its side, so the panel does not offer a
- * terminal that would be refused. Agents that reported nothing keep the link.
- */
-function TerminalLink({ uuid }: { uuid: string }) {
-  const { clients } = useRemoteControlClients();
-  const state = remoteControlState(clients.get(uuid));
-
-  if (state.known && !state.terminal) {
-    return (
-      <IconButton
-        variant="ghost"
-        disabled
-        title={t(
-          "terminal.remote_control_disabled",
-          "Remote control is not enabled on this agent",
-        )}
-        aria-label={t(
-          "terminal.remote_control_disabled",
-          "Remote control is not enabled on this agent",
-        )}
-      >
-        <Terminal className="p-1 opacity-40" />
-      </IconButton>
-    );
-  }
-
-  return (
-    <a href={`/terminal?uuid=${uuid}`} target="_blank" rel="noreferrer">
-      <IconButton
-        variant="ghost"
-        title={t("terminal.title", "Terminal")}
-        aria-label={t("terminal.title", "Terminal")}
-      >
-        <Terminal className="p-1" />
-      </IconButton>
-    </a>
-  );
-}
 
 async function removeClient(uuid: string) {
   await fetch(`/api/admin/client/${uuid}/remove`, {
@@ -70,7 +27,6 @@ async function removeClient(uuid: string) {
 }
 
 type InstallOptions = {
-  enableRemoteControl: boolean;
   disableAutoUpdate: boolean;
   ignoreUnsafeCert: boolean;
   ghproxy: string;
@@ -86,7 +42,6 @@ export function ActionsCell({ row }: { row: Row<z.infer<typeof schema>> }) {
   const [selectedPlatform, setSelectedPlatform] =
     React.useState<Platform>("linux");
   const [installOptions, setInstallOptions] = React.useState<InstallOptions>({
-    enableRemoteControl: false,
     disableAutoUpdate: false,
     ignoreUnsafeCert: false,
     ghproxy: "",
@@ -98,10 +53,6 @@ export function ActionsCell({ row }: { row: Row<z.infer<typeof schema>> }) {
     const host = window.location.origin;
     const token = row.original.token ?? "";
     const args: string[] = ["-e", host, "-t", token];
-    // 新安装默认关闭远控（安装器行为）；这里显式要求时才传入开启参数
-    if (installOptions.enableRemoteControl) {
-      args.push("--enable-remote-control");
-    }
     if (installOptions.disableAutoUpdate) {
       args.push("--disable-auto-update");
     }
@@ -196,28 +147,6 @@ export function ActionsCell({ row }: { row: Row<z.infer<typeof schema>> }) {
                 {t("admin.nodeTable.installOptions", "安装选项")}
               </label>
               <div className="grid grid-cols-2 gap-2">
-                <Flex gap="2">
-                  <Checkbox
-                    checked={installOptions.enableRemoteControl}
-                    onCheckedChange={(checked) => {
-                      setInstallOptions((prev) => ({
-                        ...prev,
-                        enableRemoteControl: Boolean(checked),
-                      }));
-                    }}
-                  />
-                  <label
-                    className="text-sm font-normal"
-                    onClick={() => {
-                      setInstallOptions((prev) => ({
-                        ...prev,
-                        enableRemoteControl: !prev.enableRemoteControl,
-                      }));
-                    }}
-                  >
-                    {t("admin.nodeTable.enableRemoteControl", "启用远程控制")}
-                  </label>
-                </Flex>
                 <Flex gap="2">
                   <Checkbox
                     checked={installOptions.disableAutoUpdate}
@@ -336,7 +265,6 @@ export function ActionsCell({ row }: { row: Row<z.infer<typeof schema>> }) {
           </div>
         </Dialog.Content>
       </Dialog.Root>
-      <TerminalLink uuid={row.original.uuid} />
       {/** Edit Button */}
       <EditDialog item={row.original} />
       {/** Edit Money */}
@@ -401,4 +329,3 @@ export function ActionsCell({ row }: { row: Row<z.infer<typeof schema>> }) {
     </div>
   );
 }
-

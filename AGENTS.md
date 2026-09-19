@@ -14,10 +14,8 @@
 ## 兼容性红线
 
 - HTTP / RPC2 方法名和字段由 Komari Server 决定，只能做向后兼容适配，不能单方面改名或删除。
-- Agent 远控能力是三态：
-  - `remote_control_known=true` 且缺少相应 capability：必须隐藏或禁用对应入口；
-  - `remote_control_known=false`：代表旧 Agent 未上报，保持历史行为；
-  - 不能把“未知”误判成“明确禁用”。
+- 远程命令、终端与 Agent 文件管理已按安全决策移除；不得恢复页面、菜单、安装参数、API/RPC 调用或依赖。
+- `/terminal` 必须继续处于 PWA navigation denylist，使请求到达 Server 的 `410 Gone` tombstone。
 - `src/lib/repoSources.ts` 是仓库来源的唯一入口，不得在组件里新增 `xinian5216` 或上游仓库硬编码。
 - 新增/修改用户可见文案时同步维护所有 locale，并运行 locale 一致性检查。
 - 不得删除上游署名、MIT 文本、About/Credits 或许可证取证文件。
@@ -26,8 +24,8 @@
 ## 修改原则
 
 - Bug 修复先补复现或最小回归测试；改动保持局部，避免顺手重构。
-- 终端、文件管理、远程命令属于高风险入口；相关改动必须同时检查 capability 门禁、旧 Agent 兼容和
-  Server 端拒绝逻辑。
+- 远控移除边界属于高风险安全约束；相关改动必须运行 `npm run test:remote-control-removed`，并确认
+  Server 端 `410`、RPC 注销和事件拒绝仍生效。
 - 构建产物由 Server 的 `bundled-themes.lock.json` 固定到不可变 tag；发布后如需修复必须递增 stable tag。
 - fork 行为或维护边界变化时同步更新 `UPSTREAM.md`。
 
