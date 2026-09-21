@@ -30,8 +30,9 @@
 2. **Agent 安装来源切换**（`src/components/admin/NodeTable/NodeFunction.tsx`、`src/pages/admin/index.tsx`）：
    `raw.githubusercontent.com/komari-monitor/komari-agent/...` → 本 fork 的 `xinian5216/komari-agent-stable`；
    Docker 安装命令的镜像 `ghcr.io/komari-monitor/komari-agent:latest` → `ghcr.io/xinian5216/komari-agent-stable:latest`。
-3. **升级检查来源**（`src/components/admin/AdminPanelBar.tsx`）：GitHub releases 查询由上游 komari 仓库
-   改为本 fork 的 `xinian5216/komari-stable`。
+3. **升级检查来源与 stable 修订比较**（`src/components/admin/AdminPanelBar.tsx`、
+   `src/lib/serverRelease.ts`）：GitHub releases 查询由上游 komari 仓库改为本 fork 的
+   `xinian5216/komari-stable`；比较时把 `stable.N` 纳入版本顺序，确保同一基础版本的维护发布会显示更新提示。
 4. **新增根 `LICENSE`**：上游仓库从未有过根 `LICENSE` 文件（`package.json` 无 `license` 字段、
    GitHub 元数据为 `null`），但作者在本仓库源码内已明确声明 MIT（`src/utils/eula.ts` §3、
    `src/pages/admin/about.tsx` 的 MIT 卡片、`src/utils/field.ts` 的 `MIT_LICENSE` 常量）。

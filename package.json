@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
+    "test:server-updates": "node --experimental-strip-types --test ./script/server-release-version.test.ts",
     "test:remote-control-removed": "node ./script/check-remote-control-removed.mjs",
     "test:sw-routes": "node ./script/check-sw-navigation.mjs",
     "preview": "vite preview",
