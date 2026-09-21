@@ -24,6 +24,10 @@ import LoginDialog from "../Login";
 import InlineSvgIcon from "../InlineSvgIcon";
 import { useAdminNavigation } from "@/contexts/AdminNavigationContext";
 import { SERVER_RELEASES_API } from "@/lib/repoSources";
+import {
+  selectNewerStableReleases,
+  type GithubReleaseInfo,
+} from "@/lib/serverRelease";
 import { useAccount } from "@/contexts/AccountContext";
 import { usePublicInfo } from "@/contexts/PublicInfoContext";
 import Tips from "../ui/tips";
@@ -79,15 +83,6 @@ const AdminPanelBar = ({ content }: AdminPanelBarProps) => {
     i18n.language ||
     (typeof navigator !== "undefined" ? navigator.language : "");
   // GitHub 最新发布信息与更新检测
-  interface GithubReleaseInfo {
-    tag_name: string;
-    name?: string;
-    body?: string;
-    html_url: string;
-    published_at?: string;
-    draft?: boolean;
-    prerelease?: boolean;
-  }
   const [latestRelease, setLatestRelease] = useState<GithubReleaseInfo | null>(
     null,
   );
@@ -232,33 +227,13 @@ const AdminPanelBar = ({ content }: AdminPanelBarProps) => {
     fetchVersionInfo();
   }, []);
 
-  // 规范化版本为 [major, minor, patch] 数组，忽略前缀 v 和后缀
-  function parseSemver(input?: string | null): number[] | null {
-    if (!input) return null;
-    const s = String(input).trim().replace(/^v/i, "");
-    const match = s.match(/^(\d+)\.(\d+)\.(\d+)/);
-    if (!match) return null;
-    return [Number(match[1]), Number(match[2]), Number(match[3])];
-  }
-
-  function isNewerVersion(latest?: string | null, current?: string | null) {
-    const a = parseSemver(latest);
-    const b = parseSemver(current);
-    if (!a || !b) return false;
-    for (let i = 0; i < 3; i++) {
-      if (a[i] > b[i]) return true;
-      if (a[i] < b[i]) return false;
-    }
-    return false;
-  }
-
   // 获取 GitHub releases 列表，并筛选出“比当前版本新的所有 release”
   useEffect(() => {
     let ignore = false;
-    const currentVersion = (publicInfo as any)?.version || versionInfo?.version;
+    const currentVersion = versionInfo?.version;
     if (!currentVersion) return;
 
-    async function loadReleases() {
+    async function loadReleases(installedVersion: string) {
       try {
         const resp = await fetch(
           SERVER_RELEASES_API,
@@ -266,17 +241,13 @@ const AdminPanelBar = ({ content }: AdminPanelBarProps) => {
             headers: {
               Accept: "application/vnd.github+json",
             },
-            cache: "no-cache",
+            cache: "no-store",
           },
         );
         if (!resp.ok) throw new Error(`GitHub HTTP ${resp.status}`);
         const data: GithubReleaseInfo[] = await resp.json();
         if (ignore) return;
-        const valid = (data || [])
-          .filter((r) => !r.draft && !r.prerelease)
-          .filter((r) =>
-            isNewerVersion(r?.tag_name || r?.name, currentVersion),
-          );
+        const valid = selectNewerStableReleases(data || [], installedVersion);
         setReleasesSince(valid);
         setLatestRelease(valid.length ? valid[0] : null);
         setUpdateAvailable(valid.length > 0);
@@ -290,11 +261,11 @@ const AdminPanelBar = ({ content }: AdminPanelBarProps) => {
       }
     }
 
-    loadReleases();
+    loadReleases(currentVersion);
     return () => {
       ignore = true;
     };
-  }, [publicInfo, versionInfo]);
+  }, [versionInfo?.version]);
   // Handle responsive behavior
   useEffect(() => {
     const handleResize = () => setSidebarOpen(!isMobile);
@@ -443,7 +414,7 @@ const AdminPanelBar = ({ content }: AdminPanelBarProps) => {
                     </label>
                     <div className="text-sm text-muted-foreground">
                       <span style={{ marginRight: 8 }}>
-                        {(publicInfo as any)?.version || versionInfo?.version}
+                        {versionInfo?.version}
                       </span>
                       <span>{"> "}</span>
                       <span>
@@ -495,9 +466,7 @@ const AdminPanelBar = ({ content }: AdminPanelBarProps) => {
                 className="text-sm text-muted-foreground self-end overflow-hidden"
                 hidden={isMobile}
               >
-                {(publicInfo as any)?.version ||
-                  (versionInfo &&
-                    `${versionInfo.version} (${versionInfo.hash})`)}
+                {versionInfo && `${versionInfo.version} (${versionInfo.hash})`}
               </label>
             </Flex>
             <Flex gap="3" align="center" overflowX="auto" className="km-admin-panel-controls">

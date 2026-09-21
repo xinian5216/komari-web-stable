@@ -37,6 +37,9 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Verify server update detection
+        run: npm run test:server-updates
+
       - name: Guard removed remote-control UI
         run: npm run test:remote-control-removed
 
