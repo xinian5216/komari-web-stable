@@ -30,9 +30,9 @@ Komari Server。
 npm run lint
 npm run i18n:sync:dry
 npm run test:remote-control-removed
-npm run test:sw-routes
 npm run test:server-updates
 npm run build
+npm run test:sw-routes
 ```
 
 构建产物位于 `dist/`。Server 的 `bundled-themes.lock.json` 将本仓库固定到指定 tag/commit，
