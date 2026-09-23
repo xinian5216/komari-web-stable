@@ -8,7 +8,7 @@
 | --- | --- |
 | Original Project | **Komari Web**（Komari 默认主题前端，React 19 + Vite + TypeScript） |
 | Original Repository | https://github.com/komari-monitor/komari-web |
-| Original License | **MIT**（依上游作者在其仓库内的明示：`src/utils/eula.ts` 第 3 节「本软件依据开源许可证（MIT）授权使用」/ "The Software is licensed under the MIT open-source license"，以及 `src/pages/admin/about.tsx` 中署名 `Copyright (C) 2025 Komari Monitor` 的 MIT 卡片）。**上游根目录没有 `LICENSE` 文件**，本镜像保持原状、未添加也未移除任何许可证文件；完整取证见 [`LICENSE_AUDIT.md`](./LICENSE_AUDIT.md) |
+| Original License | **MIT**（依上游作者在其仓库内的明示：`src/utils/eula.ts` 第 3 节「本软件依据开源许可证（MIT）授权使用」/ "The Software is licensed under the MIT open-source license"，以及 `src/pages/admin/about.tsx` 中署名 `Copyright (C) 2025 Komari Monitor` 的 MIT 卡片）。**上游根目录没有 `LICENSE` 文件**；本 fork 已新增根目录 `LICENSE`，将源码中现有 MIT 声明逐字提升为机器可读文件，未改变作者授权。完整取证见 [`LICENSE_AUDIT.md`](./LICENSE_AUDIT.md) |
 | Copyright / Credits | 归原作者与贡献者所有；`src/components/NavBar.tsx`、`src/pages/admin/about.tsx`、`komari-theme.json` 等处的上游链接与署名**全部保留** |
 
 ## 2. Fork 基线
@@ -49,7 +49,7 @@
      `/manage`、`/install`、`/database-recovery` 进入 denylist，避免 `theme=next` 时把
      Next 首页 HTML 当成 `/admin` 的离线回退。CI 在生产构建后检查源码与 `dist/sw.js`。
 
-> 版权、许可证与上游署名链接未改。除上述仓库来源、远控移除与 PWA 修复外，其余 UI 与业务逻辑保持上游基线。
+> 作者署名与上游链接未改；根目录 `LICENSE` 是 fork 新增文件，正文沿用源码中的 MIT 声明。除上述仓库来源、远控移除与 PWA 修复外，其余 UI 与业务逻辑保持上游基线。
 
 ## 4. 溯源方法
 
