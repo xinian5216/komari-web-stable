@@ -51,6 +51,10 @@
 
 > 作者署名与上游链接未改；根目录 `LICENSE` 是 fork 新增文件，正文沿用源码中的 MIT 声明。除上述仓库来源、远控移除与 PWA 修复外，其余 UI 与业务逻辑保持上游基线。
 
+9. **前端依赖安全维护**（`v1.5.0-stable.5`）：定向更新 Vite 至 6.4.4、source-map-js 至
+   1.2.2；移除无源码调用的 `http-proxy-middleware` 及其传递代理依赖，消除 follow-redirects
+   与 micromatch → braces 链的生产依赖告警。保留 About 页历史 Credits，不改 UI、API 与 PWA 路由策略。
+
 ## 4. 溯源方法
 
 ```bash
