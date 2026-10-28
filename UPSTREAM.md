@@ -49,11 +49,25 @@
      `/manage`、`/install`、`/database-recovery` 进入 denylist，避免 `theme=next` 时把
      Next 首页 HTML 当成 `/admin` 的离线回退。CI 在生产构建后检查源码与 `dist/sw.js`。
 
-> 作者署名与上游链接未改；根目录 `LICENSE` 是 fork 新增文件，正文沿用源码中的 MIT 声明。除上述仓库来源、远控移除与 PWA 修复外，其余 UI 与业务逻辑保持上游基线。
+> 作者署名与上游链接未改；根目录 `LICENSE` 是 fork 新增文件，正文沿用源码中的 MIT 声明。除上述改动外，其余 UI 与业务逻辑**以保持上游基线为默认目标**；依赖安全维护、构建/CI 与测试基建等变更随各 stable 版本分批进入，逐版本记录见下方清单与对应 tag 的 Release Notes，精确差异以 `git diff upstream-baseline` 为准。
 
 9. **前端依赖安全维护**（`v1.5.0-stable.5`）：定向更新 Vite 至 6.4.4、source-map-js 至
    1.2.2；移除无源码调用的 `http-proxy-middleware` 及其传递代理依赖，消除 follow-redirects
    与 micromatch → braces 链的生产依赖告警。保留 About 页历史 Credits，不改 UI、API 与 PWA 路由策略。
+10. **依赖安全维护与测试基建**（`v1.5.0-stable.6`）：
+    - zod 4.4.3 → 4.6.7，并给 `src/pages/admin/pprof.tsx` 的 `pprofSummarySchema.profiles`
+      增加 `.max(16)` 长度上限（GHSA-mrhx-c7xc-m3w5 / CVE-2023-54404：无长度约束的数组 schema
+      会为每个失败元素累积一个校验问题，耗尽内存；zod ≥ 4.6.6 先做 size 检查，但版本升级本身
+      不覆盖无界数组，故同时加上显式上限）；
+    - fast-uri 3.1.9、serialize-javascript 7.1.4（已知漏洞修复）；
+    - 显式声明 `@types/node` ^22.20.5 为 devDependency，避免重新生成 lockfile 时丢失 Node 类型；
+    - safe-npm-updates 组 22 项 minor/patch 更新（react/react-dom 19.3.1、@radix-ui/themes 3.3.0、
+      @tailwindcss/vite 4.3.3 等）；
+    - 新增 Playwright 浏览器冒烟套件（`tests/smoke/`、`playwright.config.ts`、
+      `.github/workflows/browser-smoke.yml`）：对生产构建（`vite preview`）驱动真实 Chromium，
+      公开页所需 API/RPC2 由 `tests/smoke/fixtures.ts` 模拟（不连接真实 Server），7 个用例并含
+      破坏性 mock 的负向控制；该套件成为 stable 的必需门禁之一。`npm run test:e2e` 即
+      `npm run build && playwright test`。
 
 ## 4. 溯源方法
 

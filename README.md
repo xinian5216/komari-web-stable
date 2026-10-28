@@ -33,10 +33,17 @@ npm run test:remote-control-removed
 npm run test:server-updates
 npm run build
 npm run test:sw-routes
+npm run test:e2e
 ```
 
 构建产物位于 `dist/`。Server 的 `bundled-themes.lock.json` 将本仓库固定到指定 tag/commit，
 其构建流程会把核心前端嵌入 Server；单独运行这里的 `npm run build` 不会更新已安装的面板。
+
+`npm run test:e2e`（= `npm run build && playwright test`）是 Playwright 浏览器冒烟套件
+（`tests/smoke/`，7 个用例，CI 中的 `browser-smoke.yml` 为 stable 必需门禁）：对生产构建
+（`vite preview`）驱动真实 Chromium，`/api/public`、`/api/me` 与 RPC2 均由 mock 提供，
+不连接真实 Komari Server。它不能代替对真实后端的集成验证（登录、2FA、后台页面仍需在隔离
+Server 实例上手验）。
 
 ## 作为自定义主题
 
