@@ -35,7 +35,7 @@ const pprofProfileSchema = z.object({
   preview: pprofEndpointSchema.optional(),
 });
 const pprofSummarySchema = z.object({
-  profiles: z.array(pprofProfileSchema),
+  profiles: z.array(pprofProfileSchema).max(16),
   runtime: z.object({
     goroutines: z.number().int().nonnegative(),
     memory: z.object({
