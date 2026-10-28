@@ -29,6 +29,10 @@ bundle-analysis.html
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
+# Playwright
+test-results/
+playwright-report/
+
 # IDEs and editors
 .idea/
 .vscode/*
