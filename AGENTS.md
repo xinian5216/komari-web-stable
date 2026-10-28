@@ -41,6 +41,7 @@ npm run test:remote-control-removed
 npm run i18n:sync:dry
 npm run build
 npm run test:sw-routes
+npm run test:e2e
 npm audit --omit=dev --audit-level=high
 python3 .github/scripts/check-workflow-pins.py
 gitleaks git . --log-opts="--all" --redact
@@ -51,8 +52,15 @@ gitleaks dir . --redact
 开发 / 构建依赖无漏洞；依赖维护时还需检查完整审计报告并说明范围、可达路径和兼容性。
 不得通过强制降级、批量更新、移除安全检查或忽略告警来使门禁变绿。
 
+`npm run test:e2e`（= `npm run build && playwright test`）运行 Playwright 浏览器冒烟套件
+（`tests/smoke/`，7 个用例）：对**生产构建**（`vite preview`）驱动**真实 Chromium**，
+公开页所需的 `/api/public`、`/api/me` 与 RPC2（WebSocket 与 HTTP 回退）均由
+`tests/smoke/fixtures.ts` **模拟**，不连接真实 Komari Server。它覆盖公开首页渲染、
+节点列表与交互及 mock 契约回归，并包含破坏性 mock 的负向控制；**不能**代替对真实后端的
+集成验证。
+
 依赖 / 路由 / 认证相关修改应在隔离 Server 实例验证首页、密码登录、后台页面及正常 / 旧缓存路径；
-记录测试版本、执行范围与未覆盖项，不能把源码守卫等同于真实浏览器验证。
+记录测试版本、执行范围与未覆盖项，不能把源码守卫或 mock 浏览器冒烟等同于真实后端集成验证。
 
 ## 合并与发布
 
