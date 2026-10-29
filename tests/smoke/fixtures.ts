@@ -15,6 +15,10 @@ import type { Page, Route, WebSocketRoute } from "@playwright/test";
  * RPC methods used by the public pages:
  * - `common:getNodes`            -> { [uuid]: node }
  * - `common:getNodesLatestStatus` -> { [uuid]: live status }
+ *
+ * `installAdminMocks` layers the authenticated `/admin` surface on top:
+ * a logged-in `/api/me`, `GET /api/admin/client/list`, `GET /api/admin/settings`,
+ * the admin theme menu probe and the server release feed.
  */
 
 const ONLINE_UUID = "11111111-1111-4111-8111-111111111111";
@@ -41,6 +45,15 @@ const loggedOutAccount = {
   sso_type: "",
   username: "",
   uuid: "",
+  "2fa_enabled": false,
+};
+
+const loggedInAccount = {
+  logged_in: true,
+  sso_id: "",
+  sso_type: "",
+  username: "smoke-admin",
+  uuid: "99999999-9999-4999-8999-999999999999",
   "2fa_enabled": false,
 };
 
@@ -150,6 +163,39 @@ const latestStatus: Record<string, unknown> = {
   },
 };
 
+/** Full `NodeDetail` rows returned by the authenticated admin client list. */
+const adminNodes: Record<string, unknown>[] = [
+  {
+    ...nodes[ONLINE_UUID],
+    token: "smoke-token-online",
+    remark: undefined,
+    public_remark: "",
+  },
+  {
+    ...nodes[OFFLINE_UUID],
+    token: "smoke-token-offline",
+    remark: undefined,
+    public_remark: "",
+  },
+];
+
+/** `GET /api/admin/settings` payload consumed by `useSettings`. */
+const adminSettings = {
+  sitename: "Komari Smoke",
+  description: "browser smoke test",
+  cors_origin_check_enabled: true,
+  geo_ip_enabled: false,
+  geo_ip_provider: "",
+  o_auth_provider: "",
+  o_auth_enabled: false,
+  ssrf_protection_enabled: false,
+  custom_head: "",
+  script_domain: "",
+  eula_accepted: true,
+  CreatedAt: "",
+  UpdatedAt: "",
+};
+
 /** Transport counters, reset by {@link installMocks}; used by specs to prove
  *  both JSON-RPC transports (WebSocket preferred, HTTP fallback) are live. */
 export const mockTransport = { wsMessages: 0, httpPosts: 0 };
@@ -167,7 +213,9 @@ function respondToRpcRequest(request: unknown): unknown {
         ? latestStatus
         : rpc.method === "common:getVersion"
           ? { version: "1.0.0-smoke" }
-          : undefined;
+          : rpc.method === "admin:listPlugins"
+            ? []
+            : undefined;
   if (result === undefined) {
     return { jsonrpc: "2.0", id, error: { code: -32601, message: "Method not found" } };
   }
@@ -189,14 +237,20 @@ async function fulfillJson(route: Route, body: unknown): Promise<void> {
   });
 }
 
-/** Install every mock the public pages need. Call before `page.goto`. */
-export async function installMocks(page: Page): Promise<void> {
+/** Install every mock the public pages need. Call before `page.goto`.
+ *
+ *  Pass `account` to serve a specific `GET /api/me` payload (the admin specs
+ *  use it to arrive at `/admin` already authenticated). */
+export async function installMocks(
+  page: Page,
+  { account = loggedOutAccount }: { account?: Record<string, unknown> } = {},
+): Promise<void> {
   mockTransport.wsMessages = 0;
   mockTransport.httpPosts = 0;
   await page.route("**/api/public", (route) =>
     fulfillJson(route, { status: "success", message: "", data: publicInfo }),
   );
-  await page.route("**/api/me", (route) => fulfillJson(route, loggedOutAccount));
+  await page.route("**/api/me", (route) => fulfillJson(route, account));
 
   // HTTP fallback transport for JSON-RPC (used when the socket is down).
   await page.route("**/api/rpc2", async (route) => {
@@ -234,6 +288,38 @@ export async function installMocks(page: Page): Promise<void> {
       }
     });
   });
+}
+
+/**
+ * Install the mocks the authenticated `/admin` pages need, on top of the
+ * public-page mocks. Call before `page.goto("/admin/...")`.
+ *
+ * Backed by the same contracts the app implements:
+ * - `GET /api/me`                    -> logged-in AccountContext
+ * - `GET /api/admin/client/list`     -> NodeDetail[] consumed by NodeDetailsContext
+ * - `GET /api/admin/settings`        -> { data: settings } consumed by useSettings
+ * - `GET /themes/<theme>/komari-theme.json` -> admin theme-menu probe
+ * - GitHub releases feed             -> "new version available" check
+ */
+export async function installAdminMocks(page: Page): Promise<void> {
+  await installMocks(page, { account: loggedInAccount });
+
+  // Node list for the admin table; the endpoint returns the array directly.
+  await page.route("**/api/admin/client/list", (route) =>
+    fulfillJson(route, adminNodes),
+  );
+  await page.route("**/api/admin/settings", (route) =>
+    fulfillJson(route, { status: "success", message: "", data: adminSettings }),
+  );
+  // No theme configuration -> no extra admin menu entries.
+  await page.route("**/themes/*/komari-theme.json", (route) =>
+    fulfillJson(route, {}),
+  );
+  // Keep the update check offline and deterministic.
+  await page.route(
+    "https://api.github.com/repos/xinian5216/komari-stable/releases*",
+    (route) => fulfillJson(route, []),
+  );
 }
 
 /**
