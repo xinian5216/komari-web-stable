@@ -69,6 +69,17 @@
       破坏性 mock 的负向控制；该套件成为 stable 的必需门禁之一。`npm run test:e2e` 即
       `npm run build && playwright test`。
 
+11. **修复后台服务器详情抽屉的 Radix Slot 崩溃**（待发布新 stable tag）：`src/components/ui/drawer.tsx`
+    的 `DrawerContent` 在 `DrawerPortal` 直接子节点中带有上游基线自带的显式 JSX 空格 `{" "}`
+    （源自上游提交 `05365b4`，`</DrawerPrimitive.Content>` 尾部另有一处）。fork 将
+    `@radix-ui/react-dialog` 维护到 `^1.3.1` 后，`DialogPortal` 会把每个子节点包进
+    `PortalPrimitive asChild`，纯文本空格进入 Radix Slot 即抛
+    `Primitive.div failed to slot onto its children. Expected a single React element child or \`Slottable\`.`，
+    点击 `/admin/servers` 任意服务器名称都会让整个后台落入 ErrorBoundary。修复仅删除这两处空格节点，
+    不改组件结构、依赖版本、抽屉方向/焦点/Esc/遮罩/主题与响应式行为；回归测试见
+    `tests/smoke/admin-node-drawer.spec.ts`（生产构建 + 真实 Chromium，仅 mock 后台接口，
+    不绕过真实组件渲染路径）。
+
 ## 4. 溯源方法
 
 ```bash
