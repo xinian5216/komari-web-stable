@@ -33,7 +33,7 @@
     "clsx": "^2.1.1",
     "dotenv": "^16.5.0",
     "github-markdown-css": "^5.9.0",
-    "i18next": "^25.1.2",
+    "i18next": "^26.3.4",
     "i18next-browser-languagedetector": "^8.2.2",
     "komari-web": "file:",
     "lucide-react": "^0.511.0",
